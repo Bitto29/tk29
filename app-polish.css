@@ -30,7 +30,7 @@ body.tf-mobile .actions #exportBtn,body.tf-mobile .actions #importBtn{display:no
 body.tf-mobile .actions .btn.primary{display:grid;place-items:center;width:42px;height:42px;padding:0;border-radius:14px;font-size:0}
 body.tf-mobile .actions .btn.primary:before{content:"+";font-size:24px;line-height:1}
 body.tf-mobile .tf-tools-btn{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;border:1px solid #1d2638;background:#0b1120;color:#d9e4f6;font-size:16px;letter-spacing:1px}
-body.tf-mobile .tf-tools-popover{position:absolute;right:0;top:50px;min-width:165px;padding:6px;background:#0b111c;border:1px solid #263651;border-radius:15px;box-shadow:0 22px 45px rgba(0,0,0,.42);z-index:50}
+body.tf-mobile .tf-tools-popover:not([hidden]){display:grid}body.tf-mobile .tf-tools-popover{position:absolute;right:0;top:50px;min-width:165px;padding:6px;background:#0b111c;border:1px solid #263651;border-radius:15px;box-shadow:0 22px 45px rgba(0,0,0,.42);z-index:50}
 body.tf-mobile .tf-tools-popover button{width:100%;border:0;background:transparent;color:#eef2ff;text-align:left;padding:11px 12px;border-radius:10px;font-size:12px}
 body.tf-mobile .tf-tools-popover button:active{background:#121d30}
 body.tf-mobile .hero{margin:4px 0 12px;padding:18px;border-radius:24px;min-height:176px}
