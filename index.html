@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#070a12" />
+<link rel="icon" type="image/png" href="https://i.postimg.cc/nhj3rwDH/10165a7c-c3d9-4d8e-b218-ff2d0d7eefaa.png" />
+<link rel="apple-touch-icon" href="https://i.postimg.cc/nhj3rwDH/10165a7c-c3d9-4d8e-b218-ff2d0d7eefaa.png" />
+<title>TakaFlow • Tuition Money Tracker</title>
+<style>
+  :root{
+    --bg:#070a12;
+    --panel:#0d1220;
+    --panel2:#111827;
+    --border:#1d2638;
+    --text:#eef2ff;
+    --muted:#8e9ab0;
+    --blue:#5b8cff;
+    --cyan:#26d9c7;
+    --green:#40d17c;
+    --red:#ff667d;
+    --gold:#f4c95d;
+    --shadow:0 18px 45px rgba(0,0,0,.32);
+    --radius:20px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(91,140,255,.11), transparent 26rem),
+      radial-gradient(circle at 100% 10%, rgba(38,217,199,.07), transparent 24rem),
+      var(--bg);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  button,input,select{font:inherit}
+  button{cursor:pointer}
+  .wrap{width:min(1180px, calc(100% - 28px));margin:auto}
+  header{
+    padding:24px 0 16px;
+    position:sticky;top:0;z-index:30;
+    background:linear-gradient(to bottom, rgba(7,10,18,.96), rgba(7,10,18,.78), transparent);
+    backdrop-filter:blur(14px);
+  }
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:42px;height:42px;border:1px solid #294064;border-radius:14px;
+    display:grid;place-items:center;
+    background:linear-gradient(145deg,#101a30,#0a0f1c);
+    box-shadow:inset 0 0 22px rgba(91,140,255,.11);
+  }
+  .logo img{width:25px;height:25px;object-fit:contain;border-radius:8px}
+  h1{font-size:18px;margin:0;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:12px;margin-top:2px}
+  .actions{display:flex;gap:8px}
+  .btn{
+    border:1px solid var(--border);background:#0b1120;color:var(--text);
+    padding:10px 13px;border-radius:12px;transition:.18s ease;
+  }
+  .btn:hover{transform:translateY(-1px);border-color:#355078}
+  .btn.primary{border-color:transparent;background:linear-gradient(135deg,var(--blue),#7a6dff);box-shadow:0 10px 26px rgba(91,140,255,.2)}
+  .btn.danger{color:#ffb2bc;border-color:rgba(255,102,125,.22)}
+  main{padding:8px 0 56px}
+  .hero{
+    padding:8px 0 20px;
+    display:flex;align-items:end;justify-content:space-between;gap:18px
+  }
+  .hero h2{font-size:30px;line-height:1.05;margin:10px 0 8px;letter-spacing:-.045em}
+  .hero p{margin:0;color:var(--muted);max-width:650px}
+  .month-box{
+    display:flex;align-items:center;gap:7px;border:1px solid var(--border);background:rgba(13,18,32,.86);
+    padding:7px;border-radius:14px
+  }
+  .month-box select{background:transparent;color:var(--text);border:0;outline:0;padding:5px}
+  .grid{display:grid;gap:14px}
+  .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .card{
+    background:linear-gradient(180deg,rgba(17,24,39,.92),rgba(11,16,29,.95));
+    border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)
+  }
+  .stat{padding:18px}
+  .stat-top{display:flex;justify-content:space-between;align-items:center}
+  .stat-label{font-size:12px;color:var(--muted)}
+  .stat-icon img{width:18px;height:18px;object-fit:contain;border-radius:5px}.stat-icon{
+    width:32px;height:32px;border-radius:11px;display:grid;place-items:center;
+    background:#131c2e;color:#c8d5ff
+  }
+  .stat-value{font-size:27px;font-weight:750;letter-spacing:-.03em;margin-top:14px}
+  .stat-sub{font-size:11px;color:var(--muted);margin-top:5px}
+  .green{color:var(--green)} .red{color:var(--red)} .gold{color:var(--gold)} .cyan{color:var(--cyan)}
+  .cols{grid-template-columns:1.15fr .85fr;margin-top:14px}
+  .panel{padding:18px}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .panel-title{font-size:14px;font-weight:720}
+  .panel-desc{color:var(--muted);font-size:11px;margin-top:3px}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .field label{display:block;color:var(--muted);font-size:11px;margin:0 0 6px}
+  .field input,.field select{
+    width:100%;border:1px solid var(--border);background:#090f1b;color:var(--text);
+    border-radius:12px;padding:11px 12px;outline:none;
+  }
+  .field input:focus,.field select:focus{border-color:#4268a8;box-shadow:0 0 0 3px rgba(91,140,255,.09)}
+  .full{grid-column:1/-1}
+  .mini-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .note-chips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+  .note-chip{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:11px;
+    border:1px solid var(--border);background:#0a111e
+  }
+  .note-chip span{color:var(--muted);font-size:11px}
+  .note-chip strong{font-size:12px}
+  .note-chip input{
+    width:55px;padding:6px 7px;border-radius:9px;border:1px solid var(--border);background:#0d1524;color:var(--text);text-align:center
+  }
+  .tabs{display:flex;gap:6px;background:#090f19;padding:5px;border:1px solid var(--border);border-radius:14px;margin-bottom:12px}
+  .tab{flex:1;border:0;background:transparent;color:var(--muted);padding:9px;border-radius:10px}
+  .tab.active{background:#141e31;color:var(--text)}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .summary-row:last-child{border-bottom:0}
+  .summary-row span{color:var(--muted);font-size:12px}
+  .summary-row strong{font-size:13px}
+  .progress{
+    height:7px;border-radius:999px;background:#111827;overflow:hidden;margin-top:8px
+  }
+  .progress > div{height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--blue),var(--cyan));width:0}
+  .table-wrap{margin-top:14px;overflow:auto}
+  table{width:100%;border-collapse:collapse;min-width:680px}
+  th,td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+  th{color:#71809a;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+  td{font-size:12px}
+  .badge{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:10px;border:1px solid var(--border)}
+  .badge.income{color:#9aeeb7;background:rgba(64,209,124,.08)}
+  .badge.expense{color:#ffabb8;background:rgba(255,102,125,.08)}
+  .badge.saving{color:#f8dd82;background:rgba(244,201,93,.08)}
+  .empty{text-align:center;padding:28px;color:var(--muted);font-size:12px}
+  .actions-cell{display:flex;justify-content:flex-end;align-items:center;gap:6px}
+  .icon-btn{border:1px solid rgba(255,102,125,.25);background:rgba(255,102,125,.06);color:#ffabb8;min-width:64px;height:32px;padding:0 10px;border-radius:9px;font-size:11px;font-weight:650}
+  .icon-btn:hover{background:rgba(255,102,125,.12);border-color:rgba(255,102,125,.42)}
+  .chart{height:195px;display:flex;align-items:end;gap:10px;padding-top:12px}
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+  .bar-box{height:155px;width:100%;display:flex;align-items:end;justify-content:center}
+  .bar{width:min(34px,70%);min-height:3px;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,#5b8cff,#31487c)}
+  .bar-label{font-size:9px;color:#6f7d92}
+  .bar-val{font-size:9px;color:#aeb8ca;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+
+  .flow-bars{display:grid;gap:18px;padding:15px 0 7px}
+  .flow-row{display:grid;gap:8px}
+  .flow-label{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+  .flow-label span{color:var(--muted)}
+  .flow-track{height:12px;border-radius:999px;background:#111827;overflow:hidden}
+  .flow-fill{height:100%;border-radius:inherit;min-width:2px}
+  .flow-fill.green{background:linear-gradient(90deg,#2b9f60,#40d17c)}
+  .flow-fill.red{background:linear-gradient(90deg,#b94359,#ff667d)}
+  .flow-fill.gold{background:linear-gradient(90deg,#b89535,#f4c95d)}
+  .flow-fill.cyan{background:linear-gradient(90deg,#179c91,#26d9c7)}
+  .donut-wrap{display:grid;grid-template-columns:180px minmax(0,1fr);align-items:center;gap:22px;min-width:0}
+  .donut-shell{position:relative;width:172px;height:172px;margin:auto;display:grid;place-items:center;flex:none}
+  .donut{width:172px;height:172px;display:block;overflow:visible}
+  .donut-track{fill:none;stroke:#182235;stroke-width:18}
+  .donut-spent,.donut-saved,.donut-remaining{fill:none;stroke-width:18;transform:rotate(-90deg);transform-origin:50% 50%;stroke-linecap:butt}
+  .donut-spent{stroke:#ff667d}
+  .donut-saved{stroke:#f4c95d}
+  .donut-remaining{stroke:#26d9c7}
+  .donut-income-ring{fill:none;stroke:#5b8cff;stroke-width:5;opacity:.9}
+  .donut-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none}
+  .donut-center strong{display:block;font-size:18px;line-height:1.1}
+  .donut-center span{font-size:10px;color:var(--muted);margin-top:4px}
+  .donut-note{font-size:10px;color:var(--muted);margin-top:8px;line-height:1.4}
+  .legend{display:grid;gap:8px;width:100%;min-width:0}
+  .legend-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;min-width:0}
+  .legend-row > span{min-width:0;display:flex;align-items:center;gap:0}
+  .legend-row strong{white-space:nowrap}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:7px}
+
+  .transaction-list{display:none}
+  .footer{padding:22px 0;color:#647087;font-size:11px;text-align:center}
+  .toast{
+    position:fixed;bottom:18px;left:50%;transform:translate(-50%, 20px);opacity:0;pointer-events:none;
+    background:#131c2d;border:1px solid #273858;padding:11px 14px;border-radius:12px;box-shadow:var(--shadow);font-size:12px;transition:.2s;z-index:50
+  }
+  .toast.show{transform:translate(-50%,0);opacity:1}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;padding:18px;z-index:40}
+  .modal.show{display:flex}
+  .modal-card{width:min(560px,100%);padding:18px;border-radius:20px;border:1px solid var(--border);background:#0b111c;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+  .close-x{border:1px solid var(--border);background:transparent;color:var(--muted);width:32px;height:32px;border-radius:10px}
+  @media(max-width:900px){
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cols{grid-template-columns:1fr}
+  }
+  @media(max-width:620px){
+    .wrap{width:min(100% - 18px,1180px)}
+    header{padding-top:14px}
+    .actions .btn:not(.primary){display:none}
+    .hero{align-items:stretch;flex-direction:column}
+    .hero h2{font-size:25px}
+    .month-box{width:100%}
+    .month-box select{width:100%}
+    .stats{grid-template-columns:1fr 1fr}
+    .stat{padding:14px}
+    .stat-value{font-size:21px}
+    .form-grid{grid-template-columns:1fr}
+    .full{grid-column:auto}
+    .note-chips{grid-template-columns:1fr 1fr}
+    .donut-wrap{grid-template-columns:1fr;gap:14px}
+    .donut-shell{width:164px;height:164px}
+    .donut{width:164px;height:164px}
+    .legend{width:100%}
+    .legend-row{padding:7px 0}
+    .panel{padding:15px}
+    .panel-head{align-items:flex-start}
+    .panel-desc{line-height:1.45}
+    .flow-bars{gap:12px}
+    .flow-row{gap:6px}
+    .table-wrap{overflow:visible}
+    .table-wrap table{display:none}
+    .transaction-list{display:grid;gap:10px}
+    .txn-card{border:1px solid rgba(255,255,255,.06);background:#0a111e;border-radius:14px;padding:12px}
+    .txn-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .txn-meta{display:grid;gap:5px;min-width:0}
+    .txn-date{font-size:10px;color:var(--muted)}
+    .txn-detail{font-size:12px;font-weight:700;overflow-wrap:anywhere}
+    .txn-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+    .txn-bottom .sub{font-size:10px;max-width:65%;overflow-wrap:anywhere}
+    .txn-actions{display:flex;justify-content:flex-end}
+    .txn-actions .icon-btn{min-width:72px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><img src="https://i.postimg.cc/nhj3rwDH/10165a7c-c3d9-4d8e-b218-ff2d0d7eefaa.png" alt="TakaFlow icon"></div>
+      <div>
+        <h1>TakaFlow</h1>
+        <div class="sub">Tuition cash tracker</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+      <button class="btn primary" id="addBtn">+ Add money</button>
+      <input type="file" id="fileInput" accept=".json" hidden>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <div class="sub" id="todayText"></div>
+      <h2>Your money, in one place.</h2>
+      <p>Track every tuition payment, every tuition-related expense, your savings, and the cash notes you received.</p>
+    </div>
+    <div class="month-box">
+      <span class="sub" style="padding-left:4px">View</span>
+      <select id="monthFilter" aria-label="Filter month"></select>
+    </div>
+  </section>
+
+  <section class="grid stats">
+    <div class="card stat">
+      <div class="stat-top"><span class="stat-label">Tuition income</span><div class="stat-icon"><img src="https://i.postimg.cc/nhj3rwDH/10165a7c-c3d9-4d8e-b218-ff2d0d7eefaa.png" alt=""></div></div>
+      <div class="stat-value green" id="incomeTotal">৳0</div>
+      <div class="stat-sub" id="incomeCount">0 payments</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-top"><span class="stat-label">Spent</span><div class="stat-icon"><img src="https://i.postimg.cc/nhj3rwDH/10165a7c-c3d9-4d8e-b218-ff2d0d7eefaa.png" alt=""></div></div>
+      <div class="stat-value red" id="expenseTotal">৳0</div>
+      <div class="stat-sub" id="expenseCount">0 expenses</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-top"><span class="stat-label">Saved</span><div class="stat-icon"><img src="https://i.postimg.cc/nhj3rwDH/10165a7c-c3d9-4d8e-b218-ff2d0d7eefaa.png" alt=""></div></div>
+      <div class="stat-value gold" id="savingTotal">৳0</div>
+      <div class="stat-sub" id="savingCount">0 savings</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-top"><span class="stat-label">Available</span><div class="stat-icon"><img src="https://i.postimg.cc/nhj3rwDH/10165a7c-c3d9-4d8e-b218-ff2d0d7eefaa.png" alt=""></div></div>
+      <div class="stat-value cyan" id="availableTotal">৳0</div>
+      <div class="stat-sub">income − spending − savings</div>
+    </div>
+  </section>
+
+  <section class="grid cols">
+    <div class="card panel" id="entryPanel">
+      <div class="tabs">
+        <button class="tab active" data-mode="income">Tuition received</button>
+        <button class="tab" data-mode="expense">Expense</button>
+        <button class="tab" data-mode="saving">Save money</button>
+      </div>
+
+      <div class="panel-head">
+        <div>
+          <div class="panel-title" id="formTitle">Add tuition payment</div>
+          <div class="panel-desc" id="formDesc">Record who paid you and which notes you received.</div>
+        </div>
+      </div>
+
+      <form id="entryForm">
+        <div class="form-grid">
+          <div class="field">
+            <label id="personLabel">Student / tuition</label>
+            <input id="person" placeholder="e.g. Rafi / Class 7" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Amount (৳)</label>
+            <input id="amount" type="number" min="1" step="1" placeholder="1000" required />
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input id="date" type="date" required />
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select id="category"></select>
+          </div>
+          <div class="field full">
+            <label>Note</label>
+            <input id="note" placeholder="Optional note" maxlength="100" />
+          </div>
+        </div>
+
+        <div id="denomSection">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+            <div>
+              <div class="panel-title" style="font-size:12px">Notes received</div>
+              <div class="panel-desc">Optional. Helps you remember the physical cash mix.</div>
+            </div>
+            <button type="button" class="btn" id="fillNotesBtn">Match amount</button>
+          </div>
+          <div class="note-chips" id="noteChips"></div>
+        </div>
+
+        <div class="mini-actions">
+          <button class="btn primary" type="submit" id="saveBtn">Save payment</button>
+          <button class="btn" type="button" id="resetFormBtn">Clear</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Monthly snapshot</div>
+          <div class="panel-desc">A monthly view of where your money came from and went.</div>
+        </div>
+      </div>
+      <div class="summary-row"><span>Total income</span><strong class="green" id="snapIncome">৳0</strong></div>
+      <div class="summary-row"><span>Tuition expenses</span><strong class="red" id="snapTuitionExp">৳0</strong></div>
+      <div class="summary-row"><span>Other expenses</span><strong class="red" id="snapOtherExp">৳0</strong></div>
+      <div class="summary-row"><span>Savings</span><strong class="gold" id="snapSavings">৳0</strong></div>
+      <div style="margin-top:10px">
+        <div class="summary-row" style="padding-bottom:5px"><span>Savings rate</span><strong id="savingRate">0%</strong></div>
+        <div class="progress"><div id="savingProgress"></div></div>
+      </div>
+
+      <div class="panel-head" style="margin-top:20px;margin-bottom:8px">
+        <div>
+          <div class="panel-title">Physical cash received</div>
+          <div class="panel-desc">From denomination details you entered.</div>
+        </div>
+      </div>
+      <div id="cashMix" class="summary-row"><span>No denomination data yet</span><strong>৳0</strong></div>
+      <div id="cashNotes" style="color:var(--muted);font-size:11px;line-height:1.8">Add note counts on tuition payments to build your cash mix.</div>
+    </div>
+  </section>
+
+  <section class="grid cols">
+    <div class="card panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Monthly money flow</div>
+          <div class="panel-desc">Everything for the selected month: earned, spent, and saved.</div>
+        </div>
+      </div>
+      <div class="flow-bars" id="flowBars"></div>
+    </div>
+
+    <div class="card panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Monthly money distribution</div>
+          <div class="panel-desc">Earning, spending, savings, and remaining money in the selected month.</div>
+        </div>
+      </div>
+      <div class="donut-wrap">
+        <div class="donut-shell">
+          <svg class="donut" id="donut" viewBox="0 0 172 172" role="img" aria-label="Monthly money distribution">
+            <circle class="donut-income-ring" cx="86" cy="86" r="75"></circle>
+            <circle class="donut-track" cx="86" cy="86" r="63"></circle>
+            <circle class="donut-spent" id="donutSpent" cx="86" cy="86" r="63"></circle>
+            <circle class="donut-saved" id="donutSaved" cx="86" cy="86" r="63"></circle>
+            <circle class="donut-remaining" id="donutRemaining" cx="86" cy="86" r="63"></circle>
+          </svg>
+          <div class="donut-center"><div><strong id="donutTotal">৳0</strong><span id="donutCenterLabel">earning</span></div></div>
+        </div>
+        <div>
+          <div class="legend" id="legend"></div>
+          <div class="donut-note" id="donutNote">The blue outer ring represents total earning. The inner ring shows how that earning is distributed.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Transaction history</div>
+        <div class="panel-desc">Your selected month. Data stays in this browser unless you export it.</div>
+      </div>
+      <button class="btn danger" id="clearMonthBtn">Clear this month</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th>Details</th><th>Category</th><th>Amount</th><th></th></tr></thead>
+        <tbody id="transactionsBody"></tbody>
+      </table>
+      <div class="transaction-list" id="transactionList"></div>
+    </div>
+  </section>
+
+  <div class="footer">TakaFlow • Private on-device tracker • No account required</div>
+</main>
+
+<div class="modal" id="confirmModal">
+  <div class="modal-card">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+      <div>
+        <div class="panel-title" id="modalTitle">Confirm</div>
+        <div class="panel-desc" id="modalDesc">Are you sure?</div>
+      </div>
+      <button class="close-x" id="modalClose">×</button>
+    </div>
+    <div class="mini-actions" style="justify-content:flex-end;margin-top:18px">
+      <button class="btn" id="modalCancel">Cancel</button>
+      <button class="btn danger" id="modalConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = "takaflow_v1";
+const DENOMS = [1000,500,200,100,50,20,10,5,2,1];
+
+let state = {
+  transactions: []
+};
+
+try {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+  if (saved && Array.isArray(saved.transactions)) state = saved;
+} catch {}
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const taka = n => "৳" + Math.round(Number(n)||0).toLocaleString("en-BD");
+const isoToday = () => new Date().toISOString().slice(0,10);
+const monthKey = d => String(d).slice(0,7);
+const currentMonth = monthKey(isoToday());
+
+let mode = "income";
+
+const categoryMap = {
+  income: ["Tuition fee"],
+  expense: ["Tuition transport","Teaching materials","Food","Phone / Internet","Shopping","Family","Other"],
+  saving: ["Emergency fund","Personal savings","Future goal","Other"]
+};
+
+function persist(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function uid(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+}
+
+function showToast(msg){
+  const el = $("#toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(window.__toast);
+  window.__toast = setTimeout(()=>el.classList.remove("show"), 1900);
+}
+
+function setMode(next){
+  mode = next;
+  $$(".tab").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+  $("#formTitle").textContent = mode==="income" ? "Add tuition payment" : mode==="expense" ? "Add an expense" : "Move money to savings";
+  $("#formDesc").textContent = mode==="income" ? "Record who paid you and which notes you received." : mode==="expense" ? "Track money spent on tuition or everyday purposes." : "Treat savings as money set aside from your available cash.";
+  $("#personLabel").textContent = mode==="income" ? "Student / tuition" : mode==="expense" ? "What did you spend on?" : "Savings note";
+  $("#person").placeholder = mode==="income" ? "e.g. Rafi / Class 7" : mode==="expense" ? "e.g. Rickshaw to tuition" : "e.g. Kept for Eid";
+  $("#denomSection").style.display = mode==="income" ? "" : "none";
+  fillCategories();
+  $("#saveBtn").textContent = mode==="income" ? "Save payment" : mode==="expense" ? "Save expense" : "Save savings";
+}
+
+function fillCategories(){
+  $("#category").innerHTML = categoryMap[mode].map(c=>`<option>${c}</option>`).join("");
+}
+
+function initNotes(){
+  $("#noteChips").innerHTML = DENOMS.map(v=>`
+    <div class="note-chip">
+      <span>৳${v.toLocaleString("en-BD")}</span>
+      <input class="denom" data-denom="${v}" type="number" min="0" step="1" value="0" aria-label="${v} taka notes">
+    </div>`).join("");
+}
+
+function resetForm(){
+  $("#entryForm").reset();
+  $("#date").value = isoToday();
+  $$(".denom").forEach(i=>i.value=0);
+  $("#amount").value="";
+}
+
+function transactionFilter(){
+  const selected = $("#monthFilter").value;
+  return state.transactions.filter(t=>selected==="all" || monthKey(t.date)===selected);
+}
+
+function metrics(){
+  const list = transactionFilter();
+  const income = list.filter(t=>t.type==="income").reduce((a,t)=>a+t.amount,0);
+  const expense = list.filter(t=>t.type==="expense").reduce((a,t)=>a+t.amount,0);
+  const saving = list.filter(t=>t.type==="saving").reduce((a,t)=>a+t.amount,0);
+  return {list,income,expense,saving,available:income-expense-saving};
+}
+
+function updateMonthOptions(){
+  const months = new Set([currentMonth, ...state.transactions.map(t=>monthKey(t.date))]);
+  const sorted = [...months].sort().reverse();
+  $("#monthFilter").innerHTML = `<option value="all">All time</option>` + sorted.map(m=>{
+    const label = new Date(m+"-01T00:00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"});
+    return `<option value="${m}">${label}</option>`;
+  }).join("");
+  if (!$("#monthFilter").dataset.ready){
+    $("#monthFilter").value = currentMonth;
+    $("#monthFilter").dataset.ready = "1";
+  }
+}
+
+function updateDashboard(){
+  updateMonthOptions();
+  const {list,income,expense,saving,available} = metrics();
+  $("#incomeTotal").textContent=taka(income);
+  $("#expenseTotal").textContent=taka(expense);
+  $("#savingTotal").textContent=taka(saving);
+  $("#availableTotal").textContent=taka(available);
+  $("#incomeCount").textContent=`${list.filter(t=>t.type==="income").length} payment${list.filter(t=>t.type==="income").length===1?"":"s"}`;
+  $("#expenseCount").textContent=`${list.filter(t=>t.type==="expense").length} expense${list.filter(t=>t.type==="expense").length===1?"":"s"}`;
+  $("#savingCount").textContent=`${list.filter(t=>t.type==="saving").length} saving${list.filter(t=>t.type==="saving").length===1?"":"s"}`;
+
+  const tuitionExp = list.filter(t=>t.type==="expense" && (t.category==="Tuition transport" || t.category==="Teaching materials")).reduce((a,t)=>a+t.amount,0);
+  const otherExp = expense - tuitionExp;
+  $("#snapIncome").textContent=taka(income);
+  $("#snapTuitionExp").textContent=taka(tuitionExp);
+  $("#snapOtherExp").textContent=taka(otherExp);
+  $("#snapSavings").textContent=taka(saving);
+  const rate = income ? Math.round((saving/income)*100) : 0;
+  $("#savingRate").textContent = rate + "%";
+  $("#savingProgress").style.width = Math.min(100,Math.max(0,rate)) + "%";
+
+  updateCashMix(list);
+  renderFlowBars(list);
+  renderDonut(list);
+  renderTable(list);
+}
+
+function updateCashMix(list){
+  const counts = Object.fromEntries(DENOMS.map(d=>[d,0]));
+  list.filter(t=>t.type==="income" && t.denoms).forEach(t=>{
+    for (const d of DENOMS) counts[d] += Number(t.denoms[d]||0);
+  });
+  const total = DENOMS.reduce((a,d)=>a+d*counts[d],0);
+  const noteCount = DENOMS.reduce((a,d)=>a+counts[d],0);
+  $("#cashMix").innerHTML = `<span>${noteCount ? noteCount+" note"+(noteCount===1?"":"s")+" recorded" : "No denomination data yet"}</span><strong>${taka(total)}</strong>`;
+  $("#cashNotes").innerHTML = noteCount ? DENOMS.filter(d=>counts[d]).map(d=>`৳${d.toLocaleString("en-BD")} × ${counts[d]}`).join(" &nbsp;•&nbsp; ") : "Add note counts on tuition payments to build your cash mix.";
+}
+
+function renderDonut(list){
+  const income = list.filter(t=>t.type==="income").reduce((a,t)=>a+t.amount,0);
+  const spent = list.filter(t=>t.type==="expense").reduce((a,t)=>a+t.amount,0);
+  const saved = list.filter(t=>t.type==="saving").reduce((a,t)=>a+t.amount,0);
+  const remaining = Math.max(0, income - spent - saved);
+  const over = Math.max(0, spent + saved - income);
+  const used = spent + saved;
+  const radius = 63;
+  const circumference = 2 * Math.PI * radius;
+  const ids = [["#donutSpent",spent],["#donutSaved",saved],["#donutRemaining",remaining]];
+
+  $("#donutTotal").textContent=taka(income);
+  $("#donutCenterLabel").textContent="earning";
+  $("#donutNote").textContent = over
+    ? `Spending + savings exceed this month's earning by ${taka(over)}.`
+    : "The blue outer ring is total earning. The inner ring shows spending, savings, and remaining money.";
+
+  $("#donutTrack");
+  ids.forEach(([sel])=>{
+    const el=$(sel);
+    el.style.strokeDasharray = `0 ${circumference}`;
+    el.style.strokeDashoffset = "0";
+  });
+
+  if(!income){
+    $("#donutSpent").style.strokeDasharray=`0 ${circumference}`;
+    $("#donutSaved").style.strokeDasharray=`0 ${circumference}`;
+    $("#donutRemaining").style.strokeDasharray=`0 ${circumference}`;
+    $("#legend").innerHTML=`<div class="empty" style="padding:8px 0">No monthly earning data yet.</div>`;
+    return;
+  }
+
+  // The inner ring is a true part-to-whole chart when income covers spending+savings.
+  // If spending+savings exceed income, show the two used categories normalized to
+  // the earned amount and display the over-budget warning instead of inventing a remainder.
+  let totalForSlices = income;
+  let sliceValues = [spent, saved, remaining];
+  if(over){
+    totalForSlices = used || 1;
+    sliceValues = [spent, saved, 0];
+  }
+
+  let offset = 0;
+  ids.forEach(([sel],i)=>{
+    const value = sliceValues[i];
+    const el = $(sel);
+    const length = totalForSlices ? (value / totalForSlices) * circumference : 0;
+    el.style.strokeDasharray = `${length} ${circumference - length}`;
+    el.style.strokeDashoffset = `${-offset}`;
+    offset += length;
+  });
+
+  const colors=["#ff667d","#f4c95d","#26d9c7"];
+  const labels=["Spending","Savings","Remaining"];
+  const legendRows = [`
+    <div class="legend-row">
+      <span><i class="dot" style="background:#5b8cff"></i>Earning <small style="color:var(--muted)">(total)</small></span>
+      <strong>${taka(income)}</strong>
+    </div>`];
+  sliceValues.forEach((value,i)=>{
+    const pct = income ? Math.round((value / income) * 100) : 0;
+    legendRows.push(`<div class="legend-row">
+      <span><i class="dot" style="background:${colors[i]}"></i>${labels[i]}</span>
+      <strong>${taka(value)} <span style="color:var(--muted);font-weight:500">(${pct}%)</span></strong>
+    </div>`);
+  });
+  if(over){
+    legendRows.push(`<div class="legend-row"><span><i class="dot" style="background:#ff9a5f"></i>Over budget</span><strong class="red">${taka(over)}</strong></div>`);
+  }
+  $("#legend").innerHTML=legendRows.join("");
+}
+function renderFlowBars(list){
+  const income = list.filter(t=>t.type==="income").reduce((a,t)=>a+t.amount,0);
+  const spent = list.filter(t=>t.type==="expense").reduce((a,t)=>a+t.amount,0);
+  const saved = list.filter(t=>t.type==="saving").reduce((a,t)=>a+t.amount,0);
+  const available = Math.max(0, income-spent-saved);
+  const items=[
+    ["Earning",income,"green"],
+    ["Spending",spent,"red"],
+    ["Savings",saved,"gold"],
+    ["Available",available,"cyan"]
+  ];
+  const max=Math.max(1,...items.map(x=>x[1]));
+  $("#flowBars").innerHTML=items.map(([label,value,cls])=>`
+    <div class="flow-row">
+      <div class="flow-label"><span>${label}</span><strong class="${cls}">${taka(value)}</strong></div>
+      <div class="flow-track"><div class="flow-fill ${cls}" style="width:${Math.max(2,(value/max)*100)}%"></div></div>
+    </div>
+  `).join("");
+}
+
+function renderTable(list){
+  const rows=[...list].sort((a,b)=>b.date.localeCompare(a.date) || b.createdAt-a.createdAt);
+  if(!rows.length){
+    $("#transactionsBody").innerHTML=`<tr><td colspan="6" class="empty">No transactions for this view yet.</td></tr>`;
+    $("#transactionList").innerHTML=`<div class="empty card" style="padding:20px">No transactions for this view yet.</div>`;
+    return;
+  }
+
+  $("#transactionsBody").innerHTML=rows.map(t=>{
+    const detail = t.type==="income" ? (t.person || "Tuition payment") : (t.person || t.note || t.category);
+    const sign = t.type==="income" ? "+" : "−";
+    const typeLabel = t.type==="income" ? "Income" : t.type==="expense" ? "Expense" : "Saved";
+    return `<tr>
+      <td>${new Date(t.date+"T12:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})}</td>
+      <td><span class="badge ${t.type}">${typeLabel}</span></td>
+      <td><strong>${escapeHtml(detail)}</strong>${t.note && t.type!=="expense"?`<div class="sub">${escapeHtml(t.note)}</div>`:""}</td>
+      <td>${escapeHtml(t.category)}</td>
+      <td class="${t.type==='income'?'green':t.type==='expense'?'red':'gold'}"><strong>${sign}${taka(t.amount).slice(1)}</strong></td>
+      <td><div class="actions-cell"><button class="icon-btn" onclick="deleteTransaction('${t.id}')" aria-label="Delete transaction">Delete</button></div></td>
+    </tr>`;
+  }).join("");
+
+  $("#transactionList").innerHTML=rows.map(t=>{
+    const detail = t.type==="income" ? (t.person || "Tuition payment") : (t.person || t.note || t.category);
+    const sign = t.type==="income" ? "+" : "−";
+    const typeLabel = t.type==="income" ? "Income" : t.type==="expense" ? "Expense" : "Saved";
+    return `<div class="txn-card">
+      <div class="txn-top">
+        <div class="txn-meta">
+          <div>${`<span class="badge ${t.type}">${typeLabel}</span>`}</div>
+          <div class="txn-detail">${escapeHtml(detail)}</div>
+          <div class="txn-date">${new Date(t.date+"T12:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})} · ${escapeHtml(t.category)}</div>
+        </div>
+        <strong class="${t.type==='income'?'green':t.type==='expense'?'red':'gold'}">${sign}${taka(t.amount).slice(1)}</strong>
+      </div>
+      <div class="txn-bottom">
+        <div class="sub">${escapeHtml(t.note || '')}</div>
+        <div class="txn-actions"><button class="icon-btn" onclick="deleteTransaction('${t.id}')" aria-label="Delete transaction">Delete</button></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+function escapeHtml(str=""){
+  return String(str).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+function autoMatchDenoms(){
+  let amount=Math.max(0,Math.floor(Number($("#amount").value)||0));
+  $$(".denom").forEach(i=>i.value=0);
+  for(const d of DENOMS){
+    const count=Math.floor(amount/d);
+    if(count>0){
+      const input=document.querySelector(`.denom[data-denom="${d}"]`);
+      input.value=count;
+      amount-=count*d;
+    }
+  }
+}
+
+function getDenoms(){
+  return Object.fromEntries([...document.querySelectorAll(".denom")].map(i=>[i.dataset.denom,Number(i.value)||0]));
+}
+
+$("#entryForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const amount=Math.floor(Number($("#amount").value)||0);
+  const date=$("#date").value || isoToday();
+  if(amount<=0){showToast("Enter an amount first.");return;}
+  const denoms = mode==="income" ? getDenoms() : null;
+  if(mode==="income"){
+    const denomTotal = DENOMS.reduce((a,d)=>a+d*(denoms[d]||0),0);
+    if(denomTotal && denomTotal!==amount){
+      showToast("Note counts do not match the amount.");
+      return;
+    }
+  }
+  state.transactions.push({
+    id:uid(), type:mode, amount, date, createdAt:Date.now(),
+    person:$("#person").value.trim(),
+    category:$("#category").value,
+    note:$("#note").value.trim(),
+    denoms
+  });
+  persist();
+  resetForm();
+  updateDashboard();
+  showToast(mode==="income"?"Payment added.":mode==="expense"?"Expense added.":"Savings added.");
+});
+
+function deleteTransaction(id){
+  const t=state.transactions.find(x=>x.id===id);
+  if(!t)return;
+  openConfirm("Delete transaction?", `${t.type==="income"?"Income":"Money record"} of ${taka(t.amount)} will be removed.`, ()=>{
+    state.transactions=state.transactions.filter(x=>x.id!==id);
+    persist(); updateDashboard(); showToast("Transaction deleted.");
+  });
+}
+
+$("#monthFilter").addEventListener("change",updateDashboard);
+$$(".tab").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+$("#fillNotesBtn").addEventListener("click",autoMatchDenoms);
+$("#resetFormBtn").addEventListener("click",resetForm);
+$("#addBtn").addEventListener("click",()=>{window.scrollTo({top:document.querySelector("#entryPanel").offsetTop-70,behavior:"smooth"});setMode("income");$("#person").focus()});
+
+$("#exportBtn").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=`takaflow-backup-${isoToday()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast("Backup exported.");
+});
+
+$("#importBtn").addEventListener("click",()=>$("#fileInput").click());
+$("#fileInput").addEventListener("change", e=>{
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!data || !Array.isArray(data.transactions)) throw new Error();
+      state={transactions:data.transactions};
+      persist(); updateDashboard(); showToast("Backup imported.");
+    }catch{showToast("That backup file is not valid.");}
+  };
+  reader.readAsText(file);
+  e.target.value="";
+});
+
+$("#clearMonthBtn").addEventListener("click",()=>{
+  const selected=$("#monthFilter").value;
+  const label=selected==="all"?"all transactions":new Date(selected+"-01T00:00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"})+" transactions";
+  openConfirm("Clear selected records?", `This will permanently remove ${label} from this browser.`, ()=>{
+    state.transactions = selected==="all" ? [] : state.transactions.filter(t=>monthKey(t.date)!==selected);
+    persist(); updateDashboard(); showToast("Selected records cleared.");
+  });
+});
+
+let confirmAction=null;
+function openConfirm(title,desc,action){
+  $("#modalTitle").textContent=title;
+  $("#modalDesc").textContent=desc;
+  confirmAction=action;
+  $("#confirmModal").classList.add("show");
+}
+function closeModal(){ $("#confirmModal").classList.remove("show"); confirmAction=null; }
+$("#modalClose").addEventListener("click",closeModal);
+$("#modalCancel").addEventListener("click",closeModal);
+$("#modalConfirm").addEventListener("click",()=>{if(confirmAction)confirmAction();closeModal()});
+$("#confirmModal").addEventListener("click",e=>{if(e.target.id==="confirmModal")closeModal()});
+
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+
+$("#todayText").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+$("#date").value=isoToday();
+initNotes();
+fillCategories();
+updateMonthOptions();
+updateDashboard();
+</script>
+</body>
+</html>
