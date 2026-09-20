@@ -91,3 +91,147 @@ body.tf-mobile .tf-bottom-nav button.active{background:#142139;color:#eaf2ff}
 body.tf-mobile .tf-bottom-nav .tf-add{background:linear-gradient(145deg,#5b8cff,#6f72ff);color:#fff;box-shadow:0 10px 24px rgba(91,140,255,.28)}
 body.tf-mobile .tf-nav-icon{font-size:19px;line-height:18px}
 body.tf-mobile .tf-bottom-nav small{font-size:9px}
+
+
+/* Final mobile alignment pass */
+@media (max-width:720px){
+  body.tf-mobile main.wrap{
+    padding-bottom:132px;
+  }
+
+  body.tf-mobile .hero{
+    display:grid;
+    grid-template-columns:1fr;
+    align-items:stretch;
+    gap:0;
+    min-height:0;
+    padding:14px 16px 20px;
+    margin:6px 0 12px;
+    border-radius:24px;
+  }
+
+  body.tf-mobile .hero > div:first-child{
+    min-width:0;
+    display:block;
+  }
+
+  body.tf-mobile .month-box{
+    position:static;
+    order:-1;
+    justify-self:start;
+    width:max-content;
+    max-width:100%;
+    min-height:38px;
+    margin:0 0 14px;
+    padding:5px 9px;
+    border-radius:12px;
+    background:rgba(5,10,20,.74);
+    z-index:2;
+  }
+
+  body.tf-mobile .month-box .sub{
+    display:inline;
+    font-size:10px;
+  }
+
+  body.tf-mobile .month-box select{
+    width:auto;
+    max-width:145px;
+    min-width:72px;
+    font-size:12px;
+    line-height:1.2;
+    padding:5px 2px;
+  }
+
+  body.tf-mobile .hero h2{
+    font-size:28px;
+    line-height:1.04;
+    margin:0 0 8px;
+    max-width:100%;
+  }
+
+  body.tf-mobile .hero .sub#todayText{
+    display:block;
+    font-size:10px;
+    margin-bottom:8px;
+  }
+
+  body.tf-mobile .hero p{
+    display:none;
+  }
+
+  body.tf-mobile .tf-hero-balance{
+    margin-top:24px;
+  }
+
+  body.tf-mobile .tf-hero-balance strong{
+    font-size:38px;
+  }
+
+  body.tf-mobile .stats{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    overflow:visible;
+    gap:10px;
+    padding:0;
+    margin:0;
+    scroll-snap-type:none;
+  }
+
+  body.tf-mobile .stats .stat{
+    min-width:0;
+    width:100%;
+    min-height:116px;
+    padding:14px;
+    border-radius:19px;
+    scroll-snap-align:none;
+  }
+
+  body.tf-mobile .stat-value{
+    font-size:21px;
+    margin-top:14px;
+    white-space:nowrap;
+  }
+
+  body.tf-mobile .stat-label{
+    font-size:10.5px;
+    line-height:1.25;
+  }
+
+  body.tf-mobile .stat-sub{
+    font-size:9.5px;
+  }
+
+  body.tf-mobile .tabs{
+    gap:3px;
+    padding:4px;
+  }
+
+  body.tf-mobile .tab{
+    min-width:0;
+    padding:10px 4px;
+    font-size:10px;
+    line-height:1.15;
+    white-space:nowrap;
+  }
+
+  body.tf-mobile .panel{
+    scroll-margin-top:78px;
+  }
+
+  body.tf-mobile #entryPanel{
+    margin-bottom:12px;
+  }
+
+  body.tf-mobile .tf-bottom-nav{
+    bottom:max(10px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width:360px){
+  body.tf-mobile .hero h2{font-size:24px}
+  body.tf-mobile .tf-hero-balance strong{font-size:33px}
+  body.tf-mobile .stat-value{font-size:18px}
+  body.tf-mobile .tab{font-size:9px;padding-inline:2px}
+  body.tf-mobile .month-box select{max-width:118px}
+}
