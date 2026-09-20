@@ -1,0 +1,39 @@
+name: Apply TakaFlow app polish
+
+on:
+  push:
+    paths:
+      - "app-polish.css"
+      - "app-polish.js"
+      - ".github/workflows/takaflow-polish.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Attach app layer
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path("index.html")
+          s = p.read_text(encoding="utf-8")
+          css = '<link rel="stylesheet" href="app-polish.css">'
+          js = '<script src="app-polish.js"></script>'
+          if css not in s:
+              s = s.replace("</head>", css + "\n</head>", 1)
+          if js not in s:
+              s = s.replace("</body>", js + "\n</body>", 1)
+          p.write_text(s, encoding="utf-8")
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Polish TakaFlow mobile app UI [skip ci]"
+          git push
